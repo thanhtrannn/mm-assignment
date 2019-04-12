@@ -322,7 +322,6 @@
     <option>Security</option>
   </select>
   <br>
-  <br>
   <div class="additional-section">
 
 
@@ -353,7 +352,7 @@
   var factorTotal = 0;
   var languageMultiplyer = null;
   var additionalFunctionPointEnvironment = 0;
-
+  var additionalFunctionPointSecurity = 0;
   function calculateTop() {
     total = 0;
     var inputsTotal = $("input[name*='userInputsCount']").val() * $("#userInputsWeight").val();
@@ -370,14 +369,22 @@
     $("input[name*='countTotal']").val(total);
   }
 
+  function securityCalc() {
+    additionalFunctionPointSecurity = 0;
+    $(".additional-section-security").find("select").each(function () {
+      additionalFunctionPointSecurity += parseInt(this.value);
+    });
+    $("#additionalFunctionPointSecurity").val(additionalFunctionPointSecurity);
+  };
+
   function environmentFactorCalc() {
     var additionalFunctionPointEnvironment = 1;
-    $(".additional-section").find("input[type=number]").each(function () {
+    $(".environment-section").find("input[type=number]").each(function () {
       if (this.id !== "additionalFunctionPointEnvironment") {
         additionalFunctionPointEnvironment *= parseInt(this.value);
       }
     });
-    $(".additional-section").find("select").each(function () {
+    $(".environment-section").find("select").each(function () {
 
       additionalFunctionPointEnvironment *= parseInt(this.value);
     });
@@ -390,20 +397,14 @@
     if (additionalFunctionPointEnvironment === undefined) {
       additionalFunctionPointEnvironment = 0;
     }
-
-
     var checkSecurity = document.getElementById("additional-security");
     var additionalFunctionPointSecurity = 0;
     // check if the html element has been created yet
     // if it has, then pull the values from the form to add more function points
     if (checkSecurity != null) {
       var additionalFunctionPointSecurity = parseInt($("#securityInputOne").val()) + parseInt($("#securityInputTwo").val()) + parseInt($("#securityInputThree").val());
+      $("#additionalFunctionPointSecurity").val(additionalFunctionPointSecurity);
     }
-
-
-
-
-
     factorTotal = 0;
     total = $("input[name*='countTotal']").val();
     $(".factor-section").find("input[type=number]").each(function () {
@@ -422,6 +423,7 @@
 
     // calculate man months
     var getTime = parseFloat(getFunctionPoints / manMonthMultiplyer).toFixed(2);
+
     $("#resultsTime").html(getTime + " Months");
 
 
@@ -469,10 +471,14 @@
         });
       }
     });
+    envTrigger = false;
+    secTrigger = false;
     // Other Factor Section
     $("#other-factor").change(function () {
       // IF DEVELOPEMENT ENVIRONMENT IS SELECTED
-      if (this.value === "Development Environment") {
+      if (this.value === "Development Environment" && envTrigger === false) {
+        envTrigger = true;
+        $(".additional-section").append("<br><div class='environment-section'>");
         $.ajax({
           url: "environment.csv",
           dataType: "text",
@@ -494,27 +500,29 @@
               }
               if (a === "") {
                 textToPut = "Total FP from Environment";
-                formInput = "<input type='number' class='form-control' id='additionalFunctionPointEnvironment' readonly value='25'/>";
+                formInput = "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointEnvironment' readonly value='25'/>";
               }
-              $(".additional-section").append(
+              $(".environment-section").append(
                 "<div class='form-group row'><div class='col-xs-10'>" + textToPut + " </div>" +
                 "<div class='col-xs-2'>" + formInput + "</div></div>"
               );
 
               count++;
             });
-            $(".additional-section").find("input[type=number]").change(function () {
+            $(".environment-section").append("</div>");
+            $(".environment-section").find("input[type=number]").change(function () {
               environmentFactorCalc();
             });
-            $(".additional-section").find("select").change(function () {
+            $(".environment-section").find("select").change(function () {
               environmentFactorCalc();
             });
           }
 
         });
       }
-      if (this.value === "Security") {
-        $(".additional-section").append("<div id ='additional-security' class='additional-section-security'>");
+      if (this.value === "Security" && secTrigger === false) {
+        secTrigger = true;
+        $(".additional-section").append("<br><div id ='additional-security' class='additional-section-security'>");
         $(".additional-section-security").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Will the system require user authentication?" + " </div>" +
           "<div class='col-xs-2'> <select class='form-control' id='securityInputOne'>"
@@ -536,7 +544,27 @@
           + "<option value='0'>No</option>"
           + "</select> </div>"
         );
+        $(".additional-section-security").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Total FP From " + " </div>" +
+          "<div class='col-xs-2'>"
+          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSecurity' readonly value='15'>"
+          + "</select> </div>"
+        );
+        $(".additional-section-security").find("select").change(function () {
+          securityCalc();
+        });
       }
+    });
+
+    $("input[type=reset]").click(function () {
+      $(".additional-section").html("");
+      var total = 0;
+      var factorTotal = 0;
+      envTrigger = false;
+      secTrigger = false;
+      $("#resultsFunctionPoints").html("");
+      $("#resultsLinesOfCode").html("");
+      $("#resultsTime").html("");
     });
   })
 </script>
