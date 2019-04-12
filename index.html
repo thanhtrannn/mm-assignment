@@ -307,7 +307,7 @@
           </select>
         </td>
         <td><input type="number" class="form-control" id="languageLevel" readonly /></td>
-        <td><input type="number" class="form-control" id="fP-Man-Month" readonly /></td>
+        <td><input type="number" class="form-control" id="FP-Man-Month" readonly /></td>
         <td><input type="number" class="form-control" id="LOC-FP" readonly /></td>
       </tr>
     </tbody>
@@ -329,13 +329,17 @@
   <br>
   <br>
   <div class="container-fluid">
-  <input type="button" class="submit btn btn-primary" value="Calculate">
-  <input type="reset" class="btn btn-danger" name="Reset"></p>
-  </form>
-  <br>
-  <div class="results-section">
-    <p style="font-size:2em;"><span style="font-weight:bold;">Results</span> - According to the input your project has: <span id="results"></span></p>
-  </div>
+    <input type="button" class="submit btn btn-primary" value="Calculate">
+    <input type="reset" class="btn btn-danger" name="Reset"></p>
+    </form>
+    <br>
+    <div class="results-section">
+      <p style="font-size:2em;"><span style="font-weight:bold;">Results</span> - According to the input your project
+        has:</p>
+      <p style="font-size:2em; margin-left: 5%">Function Points: <span id="resultsFunctionPoints"></span></span></p>
+      <p style="font-size:2em; margin-left: 5%">Lines of Code: <span id="resultsLinesOfCode"></span></span></p>
+      <p style="font-size:2em; margin-left: 5%">Time: <span id="resultsTime"></span></span></p>
+    </div>
   </div>
   </div>
 </body>
@@ -345,8 +349,9 @@
 <script type="text/javascript">
   var total = 0;
   var factorTotal = 0;
-  var languageTotal = 1;
+  var languageMultiplyer = null;
   var additionalTotal = 0;
+
   function calculateTop() {
     total = 0;
     var inputsTotal = $("input[name*='userInputsCount']").val() * $("#userInputsWeight").val();
@@ -377,8 +382,8 @@
 
   function calculateFactors() {
     additionalTotal = $("#additionalTotal").val();
-    if (additionalTotal === undefined){
-      additionalTotal = 0; 
+    if (additionalTotal === undefined) {
+      additionalTotal = 0;
     }
     factorTotal = 0;
     total = $("input[name*='countTotal']").val();
@@ -386,8 +391,19 @@
       factorTotal += parseInt(this.value);
     });
 
-    var getFinal = parseInt(total * (0.65 + 0.01 * factorTotal) * languageTotal + additionalTotal);
-    $("#results").html(getFinal + " FP");
+    // calculate FP
+    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + additionalTotal);
+    $("#resultsFunctionPoints").html(getFunctionPoints + " FP");
+
+    // calculate LOC
+    if (getFunctionPoints > 0 && languageMultiplyer > 0 ) {
+      var getLinesOfCode = parseInt(getFunctionPoints * languageMultiplyer);
+      $("#resultsLinesOfCode").html(getLinesOfCode + " LOC");
+    }
+
+    // calculate man months
+    var getTime = parseFloat(getFunctionPoints / manMonthMultiplyer).toFixed(2);
+    $("#resultsTime").html(getTime + " Months");
   };
 
   $(document).ready(function () {
@@ -417,15 +433,16 @@
         $(".language-section").change(function () {
           if (this.value === "Select a Language") {
             $("#languageLevel").val("");
-            $("#fP-Man-Month").val("");
+            $("#FP-Man-Month").val("");
             $("#LOC-FP").val("");
           }
           else {
             $("#languageLevel").val(languages[this.value]["LEVEL"]);
-            $("#fP-Man-Month").val(languages[this.value]["FP/Man/Month"]);
+            $("#FP-Man-Month").val(languages[this.value]["FP/Man/Month"]);
             $("#LOC-FP").val(languages[this.value]["LOC/FP"]);
 
-            languageTotal = parseInt($("#LOC-FP").val());
+            languageMultiplyer = parseInt($("#LOC-FP").val());
+            manMonthMultiplyer = parseFloat($("#FP-Man-Month").val());
           }
 
         });
