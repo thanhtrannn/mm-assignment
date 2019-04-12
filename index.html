@@ -320,6 +320,7 @@
     <option>Select Other Factor</option>
     <option>Development Environment</option>
     <option>Security</option>
+    <option>Software Development Model</option>
   </select>
   <br>
   <div class="additional-section">
@@ -353,6 +354,7 @@
   var languageMultiplyer = null;
   var additionalFunctionPointEnvironment = 0;
   var additionalFunctionPointSecurity = 0;
+  var additionalFunctionPointSoftware = 0;
   function calculateTop() {
     total = 0;
     var inputsTotal = $("input[name*='userInputsCount']").val() * $("#userInputsWeight").val();
@@ -391,6 +393,14 @@
     $("#additionalFunctionPointEnvironment").val(additionalFunctionPointEnvironment);
   }
 
+  function softwareCalc() {
+    additionalFunctionPointSoftware = 0;
+    $(".additional-section-software").find("select").each(function () {
+      additionalFunctionPointSoftware += parseInt(this.value);
+    });
+    $("#additionalFunctionPointSoftware").val(additionalFunctionPointSoftware);
+  };
+
   function calculateFactors() {
 
     additionalFunctionPointEnvironment = $("#additionalFunctionPointEnvironment").val();;
@@ -405,6 +415,13 @@
       var additionalFunctionPointSecurity = parseInt($("#securityInputOne").val()) + parseInt($("#securityInputTwo").val()) + parseInt($("#securityInputThree").val());
       $("#additionalFunctionPointSecurity").val(additionalFunctionPointSecurity);
     }
+    additionalFunctionPointSoftware = 0;
+    var checkSoftware = document.getElementById("additional-software");
+    if (checkSoftware != null) {
+      var additionalFunctionPointSoftware = parseInt($("#softwareInputOne").val()) + parseInt($("#softwareInputTwo").val()) + parseInt($("#softwareInputThree").val());
+      $("#additionalFunctionPointSoftware").val(additionalFunctionPointSoftware);
+    }
+
     factorTotal = 0;
     total = $("input[name*='countTotal']").val();
     $(".factor-section").find("input[type=number]").each(function () {
@@ -412,7 +429,7 @@
     });
 
     // calculate FP
-    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + parseInt(additionalFunctionPointEnvironment) + parseInt(additionalFunctionPointSecurity));
+    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + parseInt(additionalFunctionPointEnvironment) + parseInt(additionalFunctionPointSecurity) + parseInt(additionalFunctionPointSoftware));
     $("#resultsFunctionPoints").html(getFunctionPoints + " FP");
 
     // calculate LOC
@@ -471,8 +488,9 @@
         });
       }
     });
+    secTrigger = false
     envTrigger = false;
-    secTrigger = false;
+    modelTrigger = false;
     // Other Factor Section
     $("#other-factor").change(function () {
       // IF DEVELOPEMENT ENVIRONMENT IS SELECTED
@@ -490,8 +508,8 @@
               var formInput = "";
               if (count === 0 || count === 2) {
                 formInput = "<select class='form-control'>"
-                  + "<option value='5' selected>No</option>"
-                  + "<option value='3' >Some What</option>"
+                  + "<option value='3' selected>No</option>"
+                  + "<option value='2' >Some What</option>"
                   + "<option value='1'>Yes</option>"
                   + "</select>";
               }
@@ -500,7 +518,7 @@
               }
               if (a === "") {
                 textToPut = "Total FP from Environment";
-                formInput = "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointEnvironment' readonly value='25'/>";
+                formInput = "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointEnvironment' readonly value='9'/>";
               }
               $(".environment-section").append(
                 "<div class='form-group row'><div class='col-xs-10'>" + textToPut + " </div>" +
@@ -526,32 +544,66 @@
         $(".additional-section-security").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Will the system require user authentication?" + " </div>" +
           "<div class='col-xs-2'> <select class='form-control' id='securityInputOne'>"
-          + "<option value='5' selected>Yes</option>"
+          + "<option value='2' selected>Yes</option>"
           + "<option value='0'>No</option>"
           + "</select> </div>"
         );
         $(".additional-section-security").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Will the system need to encrypt data at rest?" + " </div>" +
           "<div class='col-xs-2'> <select class='form-control' id='securityInputTwo'>"
-          + "<option value='5' selected>Yes</option>"
+          + "<option value='2' selected>Yes</option>"
           + "<option value='0'>No</option>"
           + "</select> </div>"
         );
         $(".additional-section-security").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Will the system need to encrypt data in transit?" + " </div>" +
           "<div class='col-xs-2'> <select class='form-control' id='securityInputThree'>"
-          + "<option value='5' selected>Yes</option>"
+          + "<option value='2' selected>Yes</option>"
           + "<option value='0'>No</option>"
           + "</select> </div>"
         );
         $(".additional-section-security").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Total FP From " + " </div>" +
           "<div class='col-xs-2'>"
-          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSecurity' readonly value='15'>"
+          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSecurity' readonly value='6'>"
           + "</select> </div>"
         );
         $(".additional-section-security").find("select").change(function () {
           securityCalc();
+        });
+      }
+      if (this.value == "Software Development Model" && modelTrigger === false) {
+        modelTrigger = true;
+        $(".additional-section").append("<br><div id ='additional-software' class='additional-section-software'>");
+        $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Will the project have a model such as SCRUM?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='softwareInputOne'>"
+          + "<option value='2' selected>Yes</option>"
+          + "<option value='0'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Is this project the only project the development team is working on?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='softwareInputTwo'>"
+          + "<option value='2' selected>Yes</option>"
+          + "<option value='0'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Are there any dependancies before this project can proceed forward in development?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='softwareInputThree'>"
+          + "<option value='0' selected>Yes</option>"
+          + "<option value='2'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Total FP From " + " </div>" +
+          "<div class='col-xs-2'>"
+          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSoftware' readonly value='6'>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").find("select").change(function () {
+          softwareCalc();
         });
       }
     });
@@ -562,6 +614,7 @@
       var factorTotal = 0;
       envTrigger = false;
       secTrigger = false;
+      modelTrigger = true;
       $("#resultsFunctionPoints").html("");
       $("#resultsLinesOfCode").html("");
       $("#resultsTime").html("");
