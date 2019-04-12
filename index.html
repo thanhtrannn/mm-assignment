@@ -319,10 +319,12 @@
   <select class="form-control" id="other-factor">
     <option>Select Other Factor</option>
     <option>Development Environment</option>
+    <option>Security</option>
   </select>
   <br>
   <br>
   <div class="additional-section">
+
 
   </div>
   </div>
@@ -350,7 +352,7 @@
   var total = 0;
   var factorTotal = 0;
   var languageMultiplyer = null;
-  var additionalTotal = 0;
+  var additionalFunctionPointEnvironment = 0;
 
   function calculateTop() {
     total = 0;
@@ -369,24 +371,39 @@
   }
 
   function environmentFactorCalc() {
-    var additionalTotal = 1;
+    var additionalFunctionPointEnvironment = 1;
     $(".additional-section").find("input[type=number]").each(function () {
-      if (this.id !== "additionalTotal") {
-        additionalTotal *= parseInt(this.value);
+      if (this.id !== "additionalFunctionPointEnvironment") {
+        additionalFunctionPointEnvironment *= parseInt(this.value);
       }
     });
     $(".additional-section").find("select").each(function () {
 
-      additionalTotal *= parseInt(this.value);
+      additionalFunctionPointEnvironment *= parseInt(this.value);
     });
-    $("#additionalTotal").val(additionalTotal);
+    $("#additionalFunctionPointEnvironment").val(additionalFunctionPointEnvironment);
   }
 
   function calculateFactors() {
-    additionalTotal = $("#additionalTotal").val();;
-    if (additionalTotal === undefined) {
-      additionalTotal = 0;
+
+    additionalFunctionPointEnvironment = $("#additionalFunctionPointEnvironment").val();;
+    if (additionalFunctionPointEnvironment === undefined) {
+      additionalFunctionPointEnvironment = 0;
     }
+
+
+    var checkSecurity = document.getElementById("additional-security");
+    var additionalFunctionPointSecurity = 0;
+    // check if the html element has been created yet
+    // if it has, then pull the values from the form to add more function points
+    if (checkSecurity != null) {
+      var additionalFunctionPointSecurity = parseInt($("#securityInputOne").val()) + parseInt($("#securityInputTwo").val()) + parseInt($("#securityInputThree").val());
+    }
+
+
+
+
+
     factorTotal = 0;
     total = $("input[name*='countTotal']").val();
     $(".factor-section").find("input[type=number]").each(function () {
@@ -394,11 +411,11 @@
     });
 
     // calculate FP
-    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + parseInt(additionalTotal));
+    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + parseInt(additionalFunctionPointEnvironment) + parseInt(additionalFunctionPointSecurity));
     $("#resultsFunctionPoints").html(getFunctionPoints + " FP");
 
     // calculate LOC
-    if (getFunctionPoints > 0 && languageMultiplyer > 0 ) {
+    if (getFunctionPoints > 0 && languageMultiplyer > 0) {
       var getLinesOfCode = parseInt(getFunctionPoints * languageMultiplyer);
       $("#resultsLinesOfCode").html(getLinesOfCode + " LOC");
     }
@@ -406,6 +423,8 @@
     // calculate man months
     var getTime = parseFloat(getFunctionPoints / manMonthMultiplyer).toFixed(2);
     $("#resultsTime").html(getTime + " Months");
+
+
   };
 
   $(document).ready(function () {
@@ -452,8 +471,6 @@
     });
     // Other Factor Section
     $("#other-factor").change(function () {
-
-      $(".additional-section").html("");
       // IF DEVELOPEMENT ENVIRONMENT IS SELECTED
       if (this.value === "Development Environment") {
         $.ajax({
@@ -477,7 +494,7 @@
               }
               if (a === "") {
                 textToPut = "Total FP from Environment";
-                formInput = "<input type='number' class='form-control' id='additionalTotal' readonly value='25'/>";
+                formInput = "<input type='number' class='form-control' id='additionalFunctionPointEnvironment' readonly value='25'/>";
               }
               $(".additional-section").append(
                 "<div class='form-group row'><div class='col-xs-10'>" + textToPut + " </div>" +
@@ -496,8 +513,30 @@
 
         });
       }
+      if (this.value === "Security") {
+        $(".additional-section").append("<div id ='additional-security' class='additional-section-security'>");
+        $(".additional-section-security").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Will the system require user authentication?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='securityInputOne'>"
+          + "<option value='5' selected>Yes</option>"
+          + "<option value='0'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-security").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Will the system need to encrypt data at rest?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='securityInputTwo'>"
+          + "<option value='5' selected>Yes</option>"
+          + "<option value='0'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-security").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Will the system need to encrypt data in transit?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='securityInputThree'>"
+          + "<option value='5' selected>Yes</option>"
+          + "<option value='0'>No</option>"
+          + "</select> </div>"
+        );
+      }
     });
-
-
   })
 </script>
