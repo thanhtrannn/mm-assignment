@@ -376,12 +376,14 @@
       }
     });
     $(".additional-section").find("select").each(function () {
+
       additionalTotal *= parseInt(this.value);
     });
+    $("#additionalTotal").val(additionalTotal);
   }
 
   function calculateFactors() {
-    additionalTotal = $("#additionalTotal").val();
+    additionalTotal = $("#additionalTotal").val();;
     if (additionalTotal === undefined) {
       additionalTotal = 0;
     }
@@ -392,7 +394,7 @@
     });
 
     // calculate FP
-    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + additionalTotal);
+    var getFunctionPoints = parseInt(total * (0.65 + 0.01 * factorTotal) + parseInt(additionalTotal));
     $("#resultsFunctionPoints").html(getFunctionPoints + " FP");
 
     // calculate LOC
@@ -450,7 +452,8 @@
     });
     // Other Factor Section
     $("#other-factor").change(function () {
-      $(".additional-section").html();
+
+      $(".additional-section").html("");
       // IF DEVELOPEMENT ENVIRONMENT IS SELECTED
       if (this.value === "Development Environment") {
         $.ajax({
@@ -464,9 +467,9 @@
               var formInput = "";
               if (count === 0 || count === 2) {
                 formInput = "<select class='form-control'>"
-                  + "<option value='10' selected>No</option>"
-                  + "<option value='5' >Some What</option>"
-                  + "<option value='2'>Yes</option>"
+                  + "<option value='5' selected>No</option>"
+                  + "<option value='3' >Some What</option>"
+                  + "<option value='1'>Yes</option>"
                   + "</select>";
               }
               else {
@@ -474,7 +477,7 @@
               }
               if (a === "") {
                 textToPut = "Total FP from Environment";
-                formInput = "<input type='number' class='form-control' id='additionalTotal' readonly value='50'/>";
+                formInput = "<input type='number' class='form-control' id='additionalTotal' readonly value='25'/>";
               }
               $(".additional-section").append(
                 "<div class='form-group row'><div class='col-xs-10'>" + textToPut + " </div>" +
