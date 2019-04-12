@@ -328,12 +328,14 @@
   </div>
   <br>
   <br>
+  <div class="container-fluid">
   <input type="button" class="submit btn btn-primary" value="Calculate">
   <input type="reset" class="btn btn-danger" name="Reset"></p>
   </form>
   <br>
   <div class="results-section">
-    <p>Result. According to the input your project has: <span id="results"></span></p>
+    <p style="font-size:2em;"><span style="font-weight:bold;">Results</span> - According to the input your project has: <span id="results"></span></p>
+  </div>
   </div>
   </div>
 </body>
@@ -373,9 +375,11 @@
     });
   }
 
-
   function calculateFactors() {
     additionalTotal = $("#additionalTotal").val();
+    if (additionalTotal === undefined){
+      additionalTotal = 0; 
+    }
     factorTotal = 0;
     total = $("input[name*='countTotal']").val();
     $(".factor-section").find("input[type=number]").each(function () {
