@@ -578,28 +578,28 @@
         $(".additional-section-software").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Will the project have a model such as SCRUM?" + " </div>" +
           "<div class='col-xs-2'> <select class='form-control' id='softwareInputOne'>"
-          + "<option value='2' selected>Yes</option>"
-          + "<option value='0'>No</option>"
-          + "</select> </div>"
-        );
-        $(".additional-section-software").append(
-          "<div class='form-group row'><div class='col-xs-10'>" + "Is this project the only project the development team is working on?" + " </div>" +
-          "<div class='col-xs-2'> <select class='form-control' id='softwareInputTwo'>"
-          + "<option value='2' selected>Yes</option>"
-          + "<option value='0'>No</option>"
-          + "</select> </div>"
-        );
-        $(".additional-section-software").append(
-          "<div class='form-group row'><div class='col-xs-10'>" + "Are there any dependancies before this project can proceed forward in development?" + " </div>" +
-          "<div class='col-xs-2'> <select class='form-control' id='softwareInputThree'>"
           + "<option value='0' selected>Yes</option>"
           + "<option value='2'>No</option>"
           + "</select> </div>"
         );
         $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Is this project the only project the development team is working on?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='softwareInputTwo'>"
+          + "<option value='0' selected>Yes</option>"
+          + "<option value='2'>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").append(
+          "<div class='form-group row'><div class='col-xs-10'>" + "Are there any dependancies before this project can proceed forward in development?" + " </div>" +
+          "<div class='col-xs-2'> <select class='form-control' id='softwareInputThree'>"
+          + "<option value='2'>Yes</option>"
+          + "<option value='0'selected>No</option>"
+          + "</select> </div>"
+        );
+        $(".additional-section-software").append(
           "<div class='form-group row'><div class='col-xs-10'>" + "Total FP From " + " </div>" +
           "<div class='col-xs-2'>"
-          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSoftware' readonly value='6'>"
+          + "<input type='number' class='form-control additionalTotal' id='additionalFunctionPointSoftware' readonly value='0'>"
           + "</select> </div>"
         );
         $(".additional-section-software").find("select").change(function () {
